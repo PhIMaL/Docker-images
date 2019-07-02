@@ -1,0 +1,5 @@
+version: "2"
+
+syncs:
+  simplest-sync:
+    src: {{PROJECT_FOLDER}}

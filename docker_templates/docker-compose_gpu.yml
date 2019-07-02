@@ -1,0 +1,17 @@
+version: "3"
+  compute:
+    image: {{IMAGE}}
+    runtime: nvidia
+    ports:
+      - "8888:8888"
+      - "6006:6006"
+    volumes:  
+      - simplest-sync:/home/jovyan/work/:nocopy 
+    command: bash -c "cd /home/jovyan/work/ &&      
+                      python setup.py develop &&         
+                      jupyter lab --allow-root --NotebookApp.token=''"
+             
+
+volumes:
+  simplest-sync:
+    external: true
