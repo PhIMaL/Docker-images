@@ -1,7 +1,9 @@
-version: "3"
+version: "2.3"
+services:
   compute:
     image: {{IMAGE}}
     runtime: nvidia
+    ipc: "host"
     ports:
       - "8888:8888"
       - "6006:6006"
@@ -9,8 +11,7 @@ version: "3"
       - simplest-sync:/home/jovyan/work/:nocopy 
     command: bash -c "cd /home/jovyan/work/ &&      
                       python setup.py develop &&         
-                      jupyter lab --allow-root --NotebookApp.token=''"
-             
+                      jupyter lab --ip 0.0.0.0 --no-browser --allow-root --NotebookApp.token=''"
 
 volumes:
   simplest-sync:
