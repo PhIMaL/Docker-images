@@ -11,5 +11,8 @@ sed "s#{{PROJECT_FOLDER}}#$projectdir#g" docker_templates/docker-sync_template.y
 #Make docker-compose file dependent for cpu
 sed "s#{{IMAGE}}#phimal/cpu:latest#g" docker_templates/docker-compose_cpu.yml > docker-compose.yml
 
+# Clean old docker-sync
+sudo docker-sync-stack clean
+
 # Run docker sync 
 sudo docker-sync-stack start
