@@ -6,12 +6,10 @@ services:
     ports:
       - "8888:8888"
       - "6006:6006"
-    volumes:  
-      - simplest-sync:/home/jovyan/work/:nocopy 
-    command: bash -c "cd /home/jovyan/work/ &&      
-                      python setup.py develop &&         
+    volumes:
+      - {{PROJECTDIR}}:/home/working/ 
+    command: bash -c "cd /home/working/ &&
+                      python setup.py develop &&
                       jupyter lab --ip 0.0.0.0 --no-browser --allow-root --NotebookApp.token=''"
 
-volumes:
-  simplest-sync:
-    external: true
+
