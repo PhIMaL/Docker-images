@@ -40,3 +40,10 @@ fi
 echo "You can stop this container by running stop_notebook.sh"
 echo "docker stop $container_name" > stop_notebook.sh
 
+
+if [ ! "$(docker ps -a -f name=config_compute_1)" ]; then
+    docker-compose restart config_compute_1
+   else
+    docker-compose up -d
+   fi
+
