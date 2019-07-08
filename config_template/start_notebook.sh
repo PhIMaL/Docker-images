@@ -1,21 +1,42 @@
 #!/bin/bash
 
+container_name="diffusion_characterization"
+image="phimal/projects:diffusioncharacterization"
+
 #First automatically find project directory
 cd ../
 projectdir=$(pwd)
 cd config/
 
-# Make docker-sync for project
-sed "s#{{PROJECT_FOLDER}}#$projectdir#g" docker_sync_templates/docker-sync_template.yml > docker-sync.yml
-
-if hash nvidia-docker 2>/dev/null; then
-        sed "s#{{IMAGE}}#[PASTE DOCKER IMAGE NAME HERE]#g" docker_sync_templates/docker-compose_gpu.yml > docker-compose.yml
+if [ "$(docker ps -aq -f name=$container_name)" ]; then
+    echo "Restarting container."
+     docker restart $container_name
+   else
+     if hash nvidia-docker 2>/dev/null; then
+        echo 'Starting container with gpu.'
+        docker run -d\
+        -p 8888:8888 -p 6006:6006 \
+        -v $projectdir:/home/working/ \
+        --ipc=host \
+        --name=$container_name \
+        --runtime=nvidia
+        $image bash -c "cd /home/working/ && \
+        python setup.py develop && \
+        jupyter lab --ip 0.0.0.0 --no-browser --allow-root --NotebookApp.token=''"
     else
-        sed "s#{{IMAGE}}#[PASTE DOCKER IMAGE NAME HERE]#g" docker_sync_templates/docker-compose_cpu.yml > docker-compose.yml
-    fi
+         echo 'Starting container without gpu.'
+         docker run -d\
+         -p 8888:8888 -p 6006:6006 \
+         -v $projectdir:/home/working/ \
+         --ipc=host \
+         --name=$container_name \
+         $image bash -c "cd /home/working/ && \
+         python setup.py develop && \
+         jupyter lab --ip 0.0.0.0 --no-browser --allow-root --NotebookApp.token=''"
+     fi
+fi
 
-# Clean old docker-sync
-sudo docker-sync-stack clean
+# Also create a nice stop script
+echo "You can stop this container by running stop_notebook.sh"
+echo "docker stop $container_name" > stop_notebook.sh
 
-# Run docker sync 
-sudo docker-sync-stack start
