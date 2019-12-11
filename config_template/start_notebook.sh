@@ -1,7 +1,7 @@
 #!/bin/bash
 
-container_name="diffusion_characterization"
-image="phimal/projects:diffusioncharacterization"
+container_name="[NAME]"
+image="phimal/projects:[NAME]"
 
 #First automatically find project directory
 cd ../
@@ -15,19 +15,19 @@ if [ "$(docker ps -aq -f name=$container_name)" ]; then
      if hash nvidia-docker 2>/dev/null; then
         echo 'Starting container with gpu.'
         docker run -d\
-        -p 8888:8888 -p 6006:6006 \
-        -v $projectdir:/home/working/ \
+        -p 8888:8888 -p 6006:6006 -p 8787:8787\
+        -v "$projectdir:/home/working/" \
         --ipc=host \
         --name=$container_name \
-        --runtime=nvidia
+        --runtime=nvidia \
         $image bash -c "cd /home/working/ && \
         python setup.py develop && \
         jupyter lab --ip 0.0.0.0 --no-browser --allow-root --NotebookApp.token=''"
     else
          echo 'Starting container without gpu.'
          docker run -d\
-         -p 8888:8888 -p 6006:6006 \
-         -v $projectdir:/home/working/ \
+         -p 8888:8888 -p 6006:6006 -p 8787:8787 \
+         -v "$projectdir:/home/working/" \
          --ipc=host \
          --name=$container_name \
          $image bash -c "cd /home/working/ && \

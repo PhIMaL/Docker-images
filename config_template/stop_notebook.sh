@@ -1,1 +1,1 @@
-docker stop diffusion_characterization
+docker stop flytrajectory
